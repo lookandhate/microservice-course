@@ -3,18 +3,18 @@ package auth
 import (
 	"context"
 	"github.com/brianvoe/gofakeit/v7"
-	authapi "github.com/lookandhate/microservice-courese/auth/pkg/auth_v1"
+	authAPI "github.com/lookandhate/microservice-courese/auth/pkg/auth_v1"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"log"
 )
 
-type ServerAPI struct {
-	authapi.UnimplementedAuthServer
+type Server struct {
+	authAPI.UnimplementedAuthServer
 }
 
-func (s *ServerAPI) Get(context context.Context, request *authapi.GetRequest) (*authapi.GetResponse, error) {
-	response := &authapi.GetResponse{
+func (s *Server) Get(context context.Context, request *authAPI.GetRequest) (*authAPI.GetResponse, error) {
+	response := &authAPI.GetResponse{
 		Id:        gofakeit.Int64(),
 		Name:      gofakeit.Name(),
 		Email:     gofakeit.Email(),
@@ -27,21 +27,21 @@ func (s *ServerAPI) Get(context context.Context, request *authapi.GetRequest) (*
 
 }
 
-func (s *ServerAPI) Create(context context.Context, request *authapi.CreateRequest) (*authapi.CreateResponse, error) {
-	response := &authapi.CreateResponse{Id: gofakeit.Int64()}
+func (s *Server) Create(context context.Context, request *authAPI.CreateRequest) (*authAPI.CreateResponse, error) {
+	response := &authAPI.CreateResponse{Id: gofakeit.Int64()}
 	log.Printf("Request: %#+v\nResponse: %#+v", request, response)
 
 	return response, nil
 
 }
 
-func (s *ServerAPI) Update(context context.Context, request *authapi.UpdateRequest) (*emptypb.Empty, error) {
+func (s *Server) Update(context context.Context, request *authAPI.UpdateRequest) (*emptypb.Empty, error) {
 	response := &emptypb.Empty{}
 	log.Printf("Request: %#+v\nResponse: %#+v", request, response)
 	return response, nil
 
 }
-func (s *ServerAPI) Delete(context context.Context, request *authapi.DeleteRequest) (*emptypb.Empty, error) {
+func (s *Server) Delete(context context.Context, request *authAPI.DeleteRequest) (*emptypb.Empty, error) {
 	response := &emptypb.Empty{}
 	log.Printf("Request: %#+v\nResponse: %#+v", request, response)
 	return response, nil

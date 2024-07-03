@@ -22,7 +22,7 @@ func main() {
 	}
 
 	s := grpc.NewServer()
-	auth_v1.RegisterAuthServer(s, &auth.ServerAPI{})
+	auth_v1.RegisterAuthServer(s, &auth.Server{})
 
 	if err = s.Serve(lis); err != nil {
 		log.Fatalf("Failed to serve GRPC server %s", err)

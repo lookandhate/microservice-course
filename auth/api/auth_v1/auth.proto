@@ -2,7 +2,7 @@
 syntax = "proto3";
 
 package auth_v1;
-option go_package = "github.com/lookandhate/microservice-course/auth/pkg/auth_v1;auth_v1";
+option go_package = "github.com/lookandhate/microservice-course/chat/pkg/auth_v1;auth_v1";
 
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
