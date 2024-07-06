@@ -17,8 +17,9 @@ service Auth {
 }
 
 enum UserRole {
-  ADMIN = 0;
-  USER = 1;
+  UNKNOWN = 0;
+  ADMIN = 1;
+  USER = 2;
 }
 
 
