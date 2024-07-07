@@ -22,7 +22,6 @@ message CreateResponse {
 
 message DeleteRequest {
   int64 id = 1;
-
 }
 
 message SendMessageRequest {

@@ -1,4 +1,3 @@
-//
 syntax = "proto3";
 
 package auth_v1;
@@ -13,7 +12,6 @@ service Auth {
   rpc Get(GetRequest) returns (GetResponse);
   rpc Update(UpdateRequest) returns (google.protobuf.Empty);
   rpc Delete(DeleteRequest) returns (google.protobuf.Empty);
-
 }
 
 enum UserRole {
@@ -21,7 +19,6 @@ enum UserRole {
   ADMIN = 1;
   USER = 2;
 }
-
 
 message CreateRequest {
   string name = 1;
@@ -46,7 +43,6 @@ message GetResponse {
   string email = 3;
   google.protobuf.Timestamp created_at = 5;
   google.protobuf.Timestamp updated_at = 6;
-
 }
 
 message UpdateRequest {

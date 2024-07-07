@@ -2,11 +2,12 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"net"
+
 	"github.com/lookandhate/microservice-courese/chat/internal/grpc/chat"
 	"github.com/lookandhate/microservice-courese/chat/pkg/chat_v1"
 	"google.golang.org/grpc"
-	"log"
-	"net"
 )
 
 const grpcPort = 50052

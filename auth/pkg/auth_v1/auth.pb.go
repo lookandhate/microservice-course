@@ -4,7 +4,7 @@
 // versions:
 // 	protoc-gen-go v1.28.1
 // 	protoc        v3.14.0
-// source: auth.proto
+// source: chat.proto
 
 package auth_v1
 

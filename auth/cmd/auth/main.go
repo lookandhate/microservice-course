@@ -2,11 +2,12 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"net"
+
 	"github.com/lookandhate/microservice-courese/auth/internal/grpc/auth"
 	"github.com/lookandhate/microservice-courese/auth/pkg/auth_v1"
 	"google.golang.org/grpc"
-	"log"
-	"net"
 )
 
 const grpcPort = 50051
