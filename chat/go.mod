@@ -1,4 +1,4 @@
-module github.com/lookandhate/microservice-courese/auth
+module github.com/lookandhate/microservice-courese/chat
 
 go 1.22
 
