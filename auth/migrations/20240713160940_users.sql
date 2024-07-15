@@ -3,11 +3,13 @@
 SELECT 'up SQL query';
 CREATE TABLE users
 (
-    id         serial primary key,
-    name       CHAR(64)  not null,
-    email      CHAR(64)  not null,
-    created_at timestamp not null default now(),
-    updated_at timestamp
+    id            serial primary key,
+    name          CHAR(64)  not null,
+    email         CHAR(64)  not null,
+    password_hash VARCHAR,
+    role          smallint  not null,
+    created_at    timestamp not null default now(),
+    updated_at    timestamp
 )
 
 -- +goose StatementEnd
