@@ -45,3 +45,21 @@ func UserModelToGetResponseProto(user *model.UserModel) *auth_v1.GetResponse {
 		UpdatedAt: timestamppb.New(user.UpdatedAt),
 	}
 }
+
+func UserUpdateFromProto(request *auth_v1.UpdateRequest) *model.UpdateUserModel {
+	if request == nil {
+		return nil
+	}
+	email := ""
+
+	if request.Email != nil {
+
+	}
+
+	return &model.UpdateUserModel{
+		Name:     request.GetName().GetValue(),
+		Email:    request.GetEmail().GetValue(),
+		Role:     int(request.Role),
+		Password: "request",
+	}
+}

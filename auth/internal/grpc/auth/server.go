@@ -33,8 +33,11 @@ func (s *Server) Create(ctx context.Context, request *authAPI.CreateRequest) (*a
 	return &authAPI.CreateResponse{Id: int64(userID)}, nil
 }
 
-func (s *Server) Update(context context.Context, request *authAPI.UpdateRequest) (*emptypb.Empty, error) {
-	log.Printf("Request: %#+v\n", request)
+func (s *Server) Update(ctx context.Context, request *authAPI.UpdateRequest) (*emptypb.Empty, error) {
+	_, err := s.userService.UpdateUser(ctx, convertor.UserUpdateFromProto(request))
+	if err != nil {
+		return nil, err
+	}
 
 	return &emptypb.Empty{}, nil
 }
