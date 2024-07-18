@@ -22,8 +22,11 @@ func main() {
 	log.Printf("Serving at %v", serverHost)
 
 	userRepo := user.NewPostgresRepository(ctx, "host=localhost port=54320 dbname=auth user=POSTGRES_USER password=POSTGRES_PASSWORD sslmode=disable")
-	userSevice := service.NewUserService(userRepo)
-	server, err := auth.NewAuthServer(userSevice)
+	userService := service.NewUserService(userRepo)
+	server, err := auth.NewAuthServer(userService)
+	if err != nil {
+		log.Fatalf("failed to create auth server: %v", err)
+	}
 
 	lis, err := net.Listen("tcp", serverHost)
 	if err != nil {

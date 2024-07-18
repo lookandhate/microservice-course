@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/Masterminds/squirrel"
 	"github.com/jackc/pgx/v4/pgxpool"
@@ -50,20 +51,80 @@ func (r *PostgresRepository) GetUser(ctx context.Context, id int) (user *model.U
 
 	user = &model.UserModel{}
 
-	err = r.pgx.QueryRow(ctx, sql, args...).Scan(&user.Id, &user.Email, &user.Password, &user.Name, &user.Role)
+	err = r.pgx.QueryRow(ctx, sql, args...).Scan(&user.ID, &user.Email, &user.Password, &user.Name, &user.Role)
 	if err != nil {
 		return nil, err
 	}
 
 	return user, nil
-
 }
-func (r *PostgresRepository) UpdateUser(ctx context.Context, user *model.UpdateUserModel) (updatedUser *model.UserModel, err error) {
-	panic("implement me")
-}
-func (r *PostgresRepository) DeleteUser(ctx context.Context, id int) (err error) {
-	panic("implement me")
 
+func (r *PostgresRepository) UpdateUser(ctx context.Context, user *model.UpdateUserModel) (*model.UserModel, error) {
+	builder := squirrel.Update("users").PlaceholderFormat(squirrel.Dollar).Where(squirrel.Eq{"id": user.ID})
+	// Todo research how to better handle nil-values on UpdateUserModel fields
+
+	if user.Password != "" {
+		builder = builder.Set("password_hash", user.Password)
+	}
+	if user.Name != "" {
+		builder = builder.Set("name", user.Name)
+	}
+	if user.Role != int(model.UserUnknownRole) {
+		builder = builder.Set("role", user.Role)
+	}
+	if user.Email != "" {
+		builder = builder.Set("email", user.Email)
+	}
+
+	builder = builder.Set("updated_at", time.Now()).Suffix("RETURNING id, email, name, role, created_at, updated_at")
+	sql, args, err := builder.ToSql()
+
+	if err != nil {
+		return nil, err
+	}
+
+	updatedUser := &model.UserModel{}
+	err = r.pgx.QueryRow(ctx, sql, args...).Scan(
+		&updatedUser.ID,
+		&updatedUser.Email,
+		&updatedUser.Name,
+		&updatedUser.Role,
+		&updatedUser.CreatedAt,
+		&updatedUser.UpdatedAt)
+	if err != nil {
+		return nil, err
+	}
+
+	return updatedUser, nil
+}
+
+func (r *PostgresRepository) DeleteUser(ctx context.Context, id int) error {
+	builder := squirrel.Delete("users").Where(squirrel.Eq{"id": id})
+	sql, args, err := builder.ToSql()
+	if err != nil {
+		return err
+	}
+	log.Println(sql, args)
+	_, err = r.pgx.Exec(ctx, sql, args...)
+	return err
+}
+
+func (r *PostgresRepository) CheckUserExists(ctx context.Context, id int) (bool, error) {
+	var exists bool
+	// using Prefix and suffix for EXIST query
+	builder := squirrel.Select("").
+		PlaceholderFormat(squirrel.Dollar).
+		Prefix("SELECT EXISTS (").
+		From("users").
+		Where(squirrel.Eq{"id": id}).
+		Suffix(")")
+	sql, args, err := builder.ToSql()
+
+	if err != nil {
+		return false, err
+	}
+	err = r.pgx.QueryRow(ctx, sql, args...).Scan(&exists)
+	return exists, err
 }
 
 func NewPostgresRepository(context context.Context, connectionDSN string) *PostgresRepository {

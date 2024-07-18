@@ -10,7 +10,7 @@ const (
 	User
 )
 
-// CreateUserModel user representation for creation at service level
+// CreateUserModel user representation for creation at service level.
 type CreateUserModel struct {
 	Name            string
 	Email           string
@@ -19,9 +19,9 @@ type CreateUserModel struct {
 	Role            UserRole
 }
 
-// UserModel at service level
+// UserModel at service level.
 type UserModel struct {
-	Id        int
+	ID        int
 	Name      string
 	Email     string
 	Role      int
@@ -30,15 +30,16 @@ type UserModel struct {
 	UpdatedAt time.Time
 }
 
-// UpdateUserModel user update data on service level
+// UpdateUserModel user update data on service level.
 type UpdateUserModel struct {
 	Name     string
 	Email    string
 	Role     int
 	Password string
+	ID       int
 }
 
-// CreateUserRepositoryModel user info for creation at repository level
+// CreateUserRepositoryModel user info for creation at repository level.
 type CreateUserRepositoryModel struct {
 	Name     string
 	Email    string

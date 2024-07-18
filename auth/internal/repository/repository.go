@@ -11,4 +11,5 @@ type UserRepository interface {
 	GetUser(context context.Context, id int) (*model.UserModel, error)
 	UpdateUser(context context.Context, updateUser *model.UpdateUserModel) (*model.UserModel, error)
 	DeleteUser(context context.Context, id int) error
+	CheckUserExists(context context.Context, id int) (bool, error)
 }

@@ -2,7 +2,6 @@ package auth
 
 import (
 	"context"
-	"log"
 
 	"github.com/lookandhate/microservice-courese/auth/internal/convertor"
 	"github.com/lookandhate/microservice-courese/auth/internal/service"
@@ -16,7 +15,8 @@ type Server struct {
 }
 
 func (s *Server) Get(ctx context.Context, request *authAPI.GetRequest) (*authAPI.GetResponse, error) {
-	user, err := s.userService.GetUser(ctx, int(request.Id))
+	user, err := s.userService.GetUser(ctx, int(request.GetId()))
+
 	if err != nil {
 		return nil, err
 	}
@@ -42,10 +42,10 @@ func (s *Server) Update(ctx context.Context, request *authAPI.UpdateRequest) (*e
 	return &emptypb.Empty{}, nil
 }
 
-func (s *Server) Delete(context context.Context, request *authAPI.DeleteRequest) (*emptypb.Empty, error) {
-	log.Printf("Request: %#+v\n", request)
+func (s *Server) Delete(ctx context.Context, request *authAPI.DeleteRequest) (*emptypb.Empty, error) {
+	err := s.userService.DeleteUser(ctx, int(request.GetId()))
 
-	return &emptypb.Empty{}, nil
+	return &emptypb.Empty{}, err
 }
 
 func NewAuthServer(service service.UserService) (*Server, error) {

@@ -8,11 +8,10 @@ import (
 	"github.com/lookandhate/microservice-courese/auth/internal/service"
 )
 
-// RegisterUser validates CreateUserModel, then passes it to repo layer and returns created user id
-func (s *Service) RegisterUser(ctx context.Context, user *model.CreateUserModel) (id int, err error) {
-
+// RegisterUser validates CreateUserModel, then passes it to repo layer and returns created user id.
+func (s *Service) RegisterUser(ctx context.Context, user *model.CreateUserModel) (int, error) {
 	if user == nil {
-		return 0, err
+		return 0, service.ErrEmptyUser
 	}
 	// Check user role has been passed correctly
 	if user.Role == model.UserUnknownRole {
@@ -29,5 +28,4 @@ func (s *Service) RegisterUser(ctx context.Context, user *model.CreateUserModel)
 		return 0, err
 	}
 	return createUserID, nil
-
 }

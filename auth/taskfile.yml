@@ -36,4 +36,6 @@ tasks:
     cmds:
       - goose -dir {{.LOCAL_MIGRATION_DIR}} postgres {{.LOCAL_MIGRATION_DSN}} create {{ .MIGRATION_NAME}} sql
 
+  lint:
+    golangci-lint run ./...
 
