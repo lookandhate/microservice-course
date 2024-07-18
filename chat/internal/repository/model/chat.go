@@ -4,7 +4,7 @@ import "time"
 
 // CreateChatModel representation of create chat on repository layer.
 type CreateChatModel struct {
-	UserIDs []int
+	UserIDs []int64
 }
 
 // ChatModel - representation of a chat on repository layer.
@@ -15,14 +15,14 @@ type ChatModel struct {
 	CreatedAt time.Time
 }
 
-// CreateMessageModel - representation of create message on repository layer
+// CreateMessageModel - representation of create message on repository layer.
 type CreateMessageModel struct {
-	Content string
-	Author  int
-	ChatID  int
+	Content  string
+	AuthorID int
+	ChatID   int
 }
 
-// MessageModel - representation of message on repository layer
+// MessageModel - representation of message on repository layer.
 type MessageModel struct {
 	Content   string
 	Author    int
@@ -31,7 +31,7 @@ type MessageModel struct {
 	UpdatedAt time.Time
 }
 
-// DeleteChatModel - representation of delete chat model
+// DeleteChatModel - representation of delete chat model.
 type DeleteChatModel struct {
 	ID int
 }

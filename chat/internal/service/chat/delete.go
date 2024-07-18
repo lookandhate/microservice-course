@@ -6,8 +6,13 @@ import (
 	"github.com/lookandhate/microservice-courese/chat/internal/service"
 )
 
-var _ service.ChatService = (*Service)(nil)
+func (s Service) Delete(ctx context.Context, chatID int) error {
+	if err := s.validateID(ctx, chatID); err != nil {
+		return err
+	}
+	if err := s.checkChatExists(ctx, chatID); err != nil {
+		return service.ErrChatDoesNotExist
+	}
 
-func (s Service) Delete(ctx context.Context, chatID int64) error {
-	return
+	return nil
 }

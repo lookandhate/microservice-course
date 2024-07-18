@@ -4,21 +4,21 @@ import "time"
 
 // CreateChatRequest is service layer create chat representation.
 type CreateChatRequest struct {
-	UserIDs []int
+	UserIDs []int64
 }
 
-// CreateChatResponse is service layer chat representation.
-type CreateChatResponse struct {
+// Chat is service layer chat representation.
+type Chat struct {
 	UserIDs []int
 	ChatID  int
 }
 
 // SendMessageRequest is service layer message representation.
 type SendMessageRequest struct {
-	ChatID      int
-	FromUserID  int
-	MessageText string
-	Timestamp   time.Time
+	ChatID    int
+	AuthorID  int
+	Content   string
+	Timestamp time.Time
 }
 
 // DeleteChatRequest is service layer message for chat deletion.

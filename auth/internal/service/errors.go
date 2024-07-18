@@ -12,7 +12,7 @@ var (
 	// ErrPasswordMismatch - when password and password confirmations are not the same.
 	ErrPasswordMismatch = errors.New("password mismatch")
 
-	// ErrUserDoesNotExist - when trying to access notexisting user.
+	// ErrUserDoesNotExist - when trying to access not existing user.
 	ErrUserDoesNotExist = errors.New("user does not exist")
 
 	// ErrEmptyUser - when passed empty user.

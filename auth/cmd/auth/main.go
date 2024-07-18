@@ -16,6 +16,7 @@ import (
 const grpcPort = 50051
 
 func main() {
+	// TODO: ADD CONFIG
 	ctx := context.Background()
 	serverHost := fmt.Sprintf("localhost:%d", grpcPort) // Change host when use docker
 
