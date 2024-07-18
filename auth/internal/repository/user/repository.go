@@ -61,24 +61,22 @@ func (r *PostgresRepository) GetUser(ctx context.Context, id int) (user *model.U
 
 func (r *PostgresRepository) UpdateUser(ctx context.Context, user *model.UpdateUserModel) (*model.UserModel, error) {
 	builder := squirrel.Update("users").PlaceholderFormat(squirrel.Dollar).Where(squirrel.Eq{"id": user.ID})
-	// Todo research how to better handle nil-values on UpdateUserModel fields
 
-	if user.Password != "" {
+	if user.Password != nil {
 		builder = builder.Set("password_hash", user.Password)
 	}
-	if user.Name != "" {
+	if user.Name != nil {
 		builder = builder.Set("name", user.Name)
 	}
 	if user.Role != int(model.UserUnknownRole) {
 		builder = builder.Set("role", user.Role)
 	}
-	if user.Email != "" {
+	if user.Email != nil {
 		builder = builder.Set("email", user.Email)
 	}
 
 	builder = builder.Set("updated_at", time.Now()).Suffix("RETURNING id, email, name, role, created_at, updated_at")
 	sql, args, err := builder.ToSql()
-
 	if err != nil {
 		return nil, err
 	}

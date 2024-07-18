@@ -32,10 +32,10 @@ type UserModel struct {
 
 // UpdateUserModel user update data on service level.
 type UpdateUserModel struct {
-	Name     string
-	Email    string
+	Name     *string
+	Email    *string
 	Role     int
-	Password string
+	Password *string
 	ID       int
 }
 

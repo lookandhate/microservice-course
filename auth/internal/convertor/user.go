@@ -56,12 +56,22 @@ func UserUpdateFromProto(user *auth_v1.UpdateRequest) *model.UpdateUserModel {
 	if user == nil {
 		return nil
 	}
+	var name, email, password *string
+	if user.Name != nil {
+		name = &user.Name.Value
+	}
+	if user.Email != nil {
+		email = &user.Email.Value
+	}
+	if user.Password != nil {
+		password = &user.Password.Value
+	}
 
 	return &model.UpdateUserModel{
-		Name:     user.GetName().GetValue(),
-		Email:    user.GetEmail().GetValue(),
+		Name:     name,
+		Email:    email,
 		Role:     int(user.GetRole()),
-		Password: user.GetPassword().GetValue(),
+		Password: password,
 		ID:       int(user.GetId()),
 	}
 }
