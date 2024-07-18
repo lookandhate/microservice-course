@@ -1,4 +1,4 @@
-package chat
+package service
 
 type Service struct {
 	repo interface{}

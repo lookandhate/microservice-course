@@ -20,3 +20,8 @@ type SendMessageRequest struct {
 	MessageText string
 	Timestamp   time.Time
 }
+
+// DeleteChatRequest is service layer message for chat deletion.
+type DeleteChatRequest struct {
+	ChatID int
+}

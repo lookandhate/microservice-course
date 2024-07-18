@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/Masterminds/squirrel"
-	"github.com/jackc/pgx/v4/pgxpool"
+	"github.com/jackc/pgx/v5/pgxpool"
 	repository "github.com/lookandhate/microservice-courese/auth/internal/repository/model"
 	"github.com/lookandhate/microservice-courese/auth/internal/service/model"
 )
@@ -127,7 +127,7 @@ func (r *PostgresRepository) CheckUserExists(ctx context.Context, id int) (bool,
 }
 
 func NewPostgresRepository(context context.Context, connectionDSN string) *PostgresRepository {
-	pgx, err := pgxpool.Connect(context, connectionDSN)
+	pgx, err := pgxpool.New(context, connectionDSN)
 	if err != nil {
 		log.Fatalf("Unable to connect to database: %v", err)
 	}

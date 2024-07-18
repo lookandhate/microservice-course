@@ -15,7 +15,8 @@ CREATE TABLE message
     author     int       not null,
     content    text      not null,
     created_at timestamp not null default now(),
-    updated_at timestamp
+    updated_at timestamp,
+    chat_id    integer REFERENCES chats (id)
 );
 
 -- +goose Down

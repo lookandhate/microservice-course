@@ -1,9 +1,9 @@
-package chat
+package service
 
 import (
 	"context"
 
-	"github.com/lookandhate/microservice-courese/chat/internal/model"
+	"github.com/lookandhate/microservice-courese/chat/internal/service/model"
 )
 
 func (s Service) Create(ctx context.Context, chat *model.CreateChatRequest) (int, error) {

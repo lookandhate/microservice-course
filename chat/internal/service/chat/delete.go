@@ -1,4 +1,4 @@
-package chat
+package service
 
 import (
 	"context"
@@ -9,5 +9,5 @@ import (
 var _ service.ChatService = (*Service)(nil)
 
 func (s Service) Delete(ctx context.Context, chatID int64) error {
-	panic("implement me")
+	return
 }
