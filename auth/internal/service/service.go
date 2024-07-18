@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/lookandhate/microservice-courese/auth/internal/model"
+	"github.com/lookandhate/microservice-courese/auth/internal/service/model"
 )
 
 type UserService interface {

@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 
-	"github.com/lookandhate/microservice-courese/auth/internal/model"
 	"github.com/lookandhate/microservice-courese/auth/internal/service"
+	"github.com/lookandhate/microservice-courese/auth/internal/service/model"
 )
 
 // UpdateUser validates passed user data and updates user info.

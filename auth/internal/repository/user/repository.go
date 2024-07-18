@@ -8,14 +8,15 @@ import (
 
 	"github.com/Masterminds/squirrel"
 	"github.com/jackc/pgx/v4/pgxpool"
-	"github.com/lookandhate/microservice-courese/auth/internal/model"
+	repository "github.com/lookandhate/microservice-courese/auth/internal/repository/model"
+	"github.com/lookandhate/microservice-courese/auth/internal/service/model"
 )
 
 type PostgresRepository struct {
 	pgx *pgxpool.Pool
 }
 
-func (r *PostgresRepository) CreateUser(ctx context.Context, user *model.CreateUserRepositoryModel) (int, error) {
+func (r *PostgresRepository) CreateUser(ctx context.Context, user *repository.CreateUserModel) (int, error) {
 	builder := squirrel.Insert("users").
 		PlaceholderFormat(squirrel.Dollar).
 		Columns("email", "password_hash", "name", "role").

@@ -1,7 +1,8 @@
 package convertor
 
 import (
-	"github.com/lookandhate/microservice-courese/auth/internal/model"
+	repository "github.com/lookandhate/microservice-courese/auth/internal/repository/model"
+	"github.com/lookandhate/microservice-courese/auth/internal/service/model"
 	"github.com/lookandhate/microservice-courese/auth/pkg/auth_v1"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -22,17 +23,17 @@ func CreateUserFromProto(user *auth_v1.CreateRequest) *model.CreateUserModel {
 }
 
 // CreateUserModelToRepo converts model from service layer to repo layer.
-func CreateUserModelToRepo(user *model.CreateUserModel) *model.CreateUserRepositoryModel {
+func CreateUserModelToRepo(user *model.CreateUserModel) *repository.CreateUserModel {
 	if user == nil {
 		return nil
 	}
 
-	return &model.CreateUserRepositoryModel{
+	return &repository.CreateUserModel{
 		Name:  user.Name,
 		Email: user.Email,
 		// TODO hashing
 		Password: user.Password,
-		Role:     user.Role,
+		Role:     repository.UserRole(user.Role),
 	}
 }
 
