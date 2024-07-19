@@ -2,7 +2,6 @@ package user
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"time"
 
@@ -28,7 +27,6 @@ func (r *PostgresRepository) CreateUser(ctx context.Context, user *repository.Cr
 		return 0, err
 	}
 
-	fmt.Println(sql, args)
 	var id int
 	err = r.pgx.QueryRow(ctx, sql, args...).Scan(&id)
 	if err != nil {
@@ -38,7 +36,7 @@ func (r *PostgresRepository) CreateUser(ctx context.Context, user *repository.Cr
 	return id, err
 }
 
-func (r *PostgresRepository) GetUser(ctx context.Context, id int) (user *model.UserModel, err error) {
+func (r *PostgresRepository) GetUser(ctx context.Context, id int) (*model.UserModel, error) {
 	builder := squirrel.
 		Select("id", "email", "password_hash", "name", "role").
 		PlaceholderFormat(squirrel.Dollar).
@@ -50,14 +48,14 @@ func (r *PostgresRepository) GetUser(ctx context.Context, id int) (user *model.U
 		return nil, err
 	}
 
-	user = &model.UserModel{}
+	var user model.UserModel
 
 	err = r.pgx.QueryRow(ctx, sql, args...).Scan(&user.ID, &user.Email, &user.Password, &user.Name, &user.Role)
 	if err != nil {
 		return nil, err
 	}
 
-	return user, nil
+	return &user, nil
 }
 
 func (r *PostgresRepository) UpdateUser(ctx context.Context, user *model.UpdateUserModel) (*model.UserModel, error) {

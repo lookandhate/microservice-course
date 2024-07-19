@@ -10,7 +10,7 @@ import (
 
 // Create chat.
 func (s Service) Create(ctx context.Context, chat *model.CreateChatRequest) (int, error) {
-	createdChat, err := s.repo.Create(ctx, convertor.CreateChatRequestToChatCreateRepo(chat))
+	createdChat, err := s.repo.CreateChat(ctx, convertor.CreateChatRequestToChatCreateRepo(chat))
 	if err != nil {
 		return 0, err
 	}
@@ -27,6 +27,7 @@ func (s Service) SendMessage(ctx context.Context, message *model.SendMessageRequ
 	if err := s.checkChatExists(ctx, message.ChatID); err != nil {
 		return service.ErrChatDoesNotExist
 	}
+	// TODO add check that user has access to the chat
 
 	_, err := s.repo.CreateMessage(ctx, convertor.CreateMessageRequestToMessageCreateRepo(message))
 

@@ -18,7 +18,7 @@ type GRPCConfig struct {
 	Port int `yaml:"port"`
 }
 
-// DB config for Postgres Database
+// DB config for Postgres Database.
 type DB struct {
 	Host   string `yaml:"host"`
 	Port   int    `yaml:"port"`
@@ -26,7 +26,7 @@ type DB struct {
 	DBName string `yaml:"db_name"`
 }
 
-// MustLoad creates AppConfig and loads it from yaml file
+// MustLoad creates AppConfig and loads it from yaml file.
 func MustLoad() *AppConfig {
 	configPath := fetchConfigPath()
 	if configPath == "" {

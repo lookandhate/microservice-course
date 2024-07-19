@@ -12,21 +12,22 @@ CREATE TABLE chats
 CREATE TABLE message
 (
     id         serial primary key,
-    author     int       not null,
+    author_id  bigint    not null,
     content    text      not null,
     created_at timestamp not null default now(),
     updated_at timestamp,
-    chat_id    integer REFERENCES chats (id)
+    chat_id    bigint references chats (id) on delete cascade
 );
 
 CREATE TABLE chat_members
 (
     id      serial primary key,
-    user_id int not null,
-    chat_id integer references chats (id)
+    user_id bigint not null,
+    chat_id bigint references chats (id) on delete cascade
 );
 
 -- +goose Down
 -- +goose StatementBegin
 SELECT 'down SQL query';
+drop table chats, chat_members, message;
 -- +goose StatementEnd

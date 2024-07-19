@@ -32,7 +32,7 @@ func (s *Server) SendMessage(ctx context.Context, request *chatAPI.SendMessageRe
 	return &emptypb.Empty{}, err
 }
 
-// NewChatServer returns GRPC server
+// NewChatServer returns GRPC server.
 func NewChatServer(chatService service.ChatService) *Server {
 	return &Server{chatService: chatService}
 }

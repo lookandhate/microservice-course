@@ -7,8 +7,8 @@ import (
 )
 
 type ChatRepository interface {
-	Create(context.Context, *model.CreateChatModel) (*model.ChatModel, error)
+	CreateChat(context.Context, *model.CreateChatModel) (*model.ChatModel, error)
 	CreateMessage(context.Context, *model.CreateMessageModel) (*model.MessageModel, error)
-	Delete(context.Context, *model.DeleteChatModel) (bool, error)
+	Delete(context.Context, int64) error
 	ChatExists(ctx context.Context, chatID int) (bool, error)
 }

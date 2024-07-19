@@ -2,7 +2,6 @@ package repository
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"time"
 
@@ -15,7 +14,8 @@ type PostgresRepository struct {
 	pgx *pgxpool.Pool
 }
 
-func (r *PostgresRepository) Create(ctx context.Context, request *model.CreateChatModel) (*model.ChatModel, error) {
+// CreateChat creates chat with chat members.
+func (r *PostgresRepository) CreateChat(ctx context.Context, request *model.CreateChatModel) (*model.ChatModel, error) {
 	builder := squirrel.Insert("chats").
 		PlaceholderFormat(squirrel.Dollar).
 		Columns("created_at").
@@ -37,40 +37,86 @@ func (r *PostgresRepository) Create(ctx context.Context, request *model.CreateCh
 	return &chatModel, err
 }
 
-// addUsersToChat creates chat members with given chatID and userIDSs
-func (r *PostgresRepository) addUsersToChat(ctx context.Context, chatID int, userIDS []int64) error {
-	// TODO COMPLETE ADDING USERS
-	builder := squirrel.Insert("chat_members").PlaceholderFormat(squirrel.Dollar).Columns("user_id", "chat_id")
-	for _, userID := range userIDS {
+// addUsersToChat creates chat members with given chatID and userIDSs.
+func (r *PostgresRepository) addUsersToChat(ctx context.Context, chatID int, userIDs []int64) error {
+	builder := squirrel.
+		Insert("chat_members").
+		PlaceholderFormat(squirrel.Dollar).
+		Columns("user_id", "chat_id")
+
+	for _, userID := range userIDs {
 		builder = builder.Values(userID, chatID)
 	}
+
 	sql, args, err := builder.ToSql()
 	if err != nil {
 		return err
 	}
 
-	fmt.Println(sql, args, err)
 	_, err = r.pgx.Exec(ctx, sql, args...)
 
 	return err
 }
 
-// CreateMessage creates message
-func (r *PostgresRepository) CreateMessage(context.Context, *model.CreateMessageModel) (*model.MessageModel, error) {
-	panic("Implement me")
+// CreateMessage creates message.
+func (r *PostgresRepository) CreateMessage(ctx context.Context, message *model.CreateMessageModel) (*model.MessageModel, error) {
+	builder := squirrel.Insert("message").
+		PlaceholderFormat(squirrel.Dollar).
+		Columns("author_id", "content", "chat_id").
+		Values(message.AuthorID, message.Content, message.ChatID).
+		Suffix("returning id, author_id, content, chat_id, created_at, updated_at")
+
+	sql, args, err := builder.ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	var createdMessage model.MessageModel
+	err = r.pgx.QueryRow(ctx, sql, args...).Scan(
+		&createdMessage.ID,
+		&createdMessage.Author,
+		&createdMessage.Content,
+		&createdMessage.ChatID,
+		&createdMessage.CreatedAt,
+		&createdMessage.UpdatedAt)
+
+	return &createdMessage, err
 }
 
-// Delete deletes chat
-func (r *PostgresRepository) Delete(context.Context, *model.DeleteChatModel) (bool, error) {
-	panic("Implement me")
+// Delete deletes chat.
+func (r *PostgresRepository) Delete(ctx context.Context, id int64) error {
+	builder := squirrel.Delete("chats").
+		PlaceholderFormat(squirrel.Dollar).
+		Where(squirrel.Eq{"id": id})
+
+	sql, args, err := builder.ToSql()
+	if err != nil {
+		return err
+	}
+	_, err = r.pgx.Exec(ctx, sql, args...)
+	return err
 }
 
-// ChatExists checks if chat exists
+// ChatExists checks if chat exists.
 func (r *PostgresRepository) ChatExists(ctx context.Context, chatID int) (bool, error) {
-	panic("Implement me")
+	var exists bool
+	// using Prefix and suffix for EXIST query
+	builder := squirrel.Select("").
+		PlaceholderFormat(squirrel.Dollar).
+		Prefix("SELECT EXISTS (").
+		From("chats").
+		Where(squirrel.Eq{"id": chatID}).
+		Suffix(")")
+	sql, args, err := builder.ToSql()
+
+	if err != nil {
+		return false, err
+	}
+	err = r.pgx.QueryRow(ctx, sql, args...).Scan(&exists)
+	return exists, err
 }
 
-// NewPostgresRepository creates PostgresRepository instance
+// NewPostgresRepository creates PostgresRepository instance.
 func NewPostgresRepository(context context.Context, connectionDSN string) *PostgresRepository {
 	pgx, err := pgxpool.New(context, connectionDSN)
 	if err != nil {
