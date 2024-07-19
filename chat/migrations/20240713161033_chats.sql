@@ -19,6 +19,13 @@ CREATE TABLE message
     chat_id    integer REFERENCES chats (id)
 );
 
+CREATE TABLE chat_members
+(
+    id      serial primary key,
+    user_id int not null,
+    chat_id integer references chats (id)
+);
+
 -- +goose Down
 -- +goose StatementBegin
 SELECT 'down SQL query';

@@ -10,9 +10,9 @@ type CreateChatModel struct {
 // ChatModel - representation of a chat on repository layer.
 type ChatModel struct {
 	ID        int
-	UserIDs   []int
-	UpdatedAt time.Time
-	CreatedAt time.Time
+	UserIDs   []int64
+	UpdatedAt *time.Time
+	CreatedAt *time.Time
 }
 
 // CreateMessageModel - representation of create message on repository layer.
