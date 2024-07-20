@@ -7,6 +7,7 @@ import (
 
 	"github.com/Masterminds/squirrel"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/lookandhate/microservice-courese/auth/internal/config"
 	repository "github.com/lookandhate/microservice-courese/auth/internal/repository/model"
 	"github.com/lookandhate/microservice-courese/auth/internal/service/model"
 )
@@ -124,8 +125,8 @@ func (r *PostgresRepository) CheckUserExists(ctx context.Context, id int) (bool,
 	return exists, err
 }
 
-func NewPostgresRepository(context context.Context, connectionDSN string) *PostgresRepository {
-	pgx, err := pgxpool.New(context, connectionDSN)
+func NewPostgresRepository(context context.Context, cfg config.DatabaseConfig) *PostgresRepository {
+	pgx, err := pgxpool.New(context, cfg.GetDSN())
 	if err != nil {
 		log.Fatalf("Unable to connect to database: %v", err)
 	}

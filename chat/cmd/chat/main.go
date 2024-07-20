@@ -16,7 +16,7 @@ import (
 
 func main() {
 	cfg := config.MustLoad()
-	serverHost := fmt.Sprintf("localhost:%d", cfg.GPRC.Port) // Change host when use docker
+	serverHost := fmt.Sprintf("localhost:%d", cfg.GPRC.Port)
 
 	log.Printf("Serving at %v", serverHost)
 
@@ -25,7 +25,7 @@ func main() {
 		log.Fatalf("Failed to listen: %s", err)
 	}
 	ctx := context.Background()
-	repo := repository.NewPostgresRepository(ctx, &cfg.Database)
+	repo := repository.NewPostgresRepository(ctx, &cfg.DB)
 	server := service.NewService(repo)
 
 	s := grpc.NewServer()

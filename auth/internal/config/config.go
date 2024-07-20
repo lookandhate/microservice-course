@@ -7,23 +7,13 @@ import (
 	"github.com/ilyakaznacheev/cleanenv"
 )
 
+const DefaultConfig = "config/local.config.yml"
+
 // AppConfig config for application.
 type AppConfig struct {
-	Env  string `yaml:"env" env-default:"local"`
-	GPRC GRPCConfig
-}
-
-// GRPCConfig config for GRPC server.
-type GRPCConfig struct {
-	Port int `yaml:"port"`
-}
-
-// DB config for Postgres Database.
-type DB struct {
-	Host   string `yaml:"host"`
-	Port   int    `yaml:"port"`
-	User   string `yaml:"user"`
-	DBName string `yaml:"db_name"`
+	Env  string         `yaml:"env" env-default:"local"`
+	GPRC GRPCConfig     `yaml:"gprc"`
+	DB   PostgresConfig `yaml:"db"`
 }
 
 // MustLoad creates AppConfig and loads it from yaml file.
@@ -58,6 +48,9 @@ func fetchConfigPath() string {
 
 	if res == "" {
 		res = os.Getenv("CONFIG_PATH")
+	}
+	if res == "" {
+		res = DefaultConfig
 	}
 
 	return res

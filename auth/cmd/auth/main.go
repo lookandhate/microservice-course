@@ -6,6 +6,7 @@ import (
 	"log"
 	"net"
 
+	"github.com/lookandhate/microservice-courese/auth/internal/config"
 	"github.com/lookandhate/microservice-courese/auth/internal/grpc/auth"
 	"github.com/lookandhate/microservice-courese/auth/internal/repository/user"
 	service "github.com/lookandhate/microservice-courese/auth/internal/service/user"
@@ -13,16 +14,13 @@ import (
 	"google.golang.org/grpc"
 )
 
-const grpcPort = 50051
-
 func main() {
-	// TODO: ADD CONFIG
 	ctx := context.Background()
-	serverHost := fmt.Sprintf("localhost:%d", grpcPort) // Change host when use docker
-
+	cfg := config.MustLoad()
+	serverHost := fmt.Sprintf("localhost:%d", cfg.GPRC.Port)
 	log.Printf("Serving at %v", serverHost)
 
-	userRepo := user.NewPostgresRepository(ctx, "host=localhost port=54320 dbname=auth user=POSTGRES_USER password=POSTGRES_PASSWORD sslmode=disable")
+	userRepo := user.NewPostgresRepository(ctx, &cfg.DB)
 	userService := service.NewUserService(userRepo)
 	server, err := auth.NewAuthServer(userService)
 	if err != nil {
