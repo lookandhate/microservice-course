@@ -7,6 +7,7 @@ import (
 
 	"github.com/Masterminds/squirrel"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/lookandhate/microservice-courese/chat/internal/config"
 	"github.com/lookandhate/microservice-courese/chat/internal/repository/model"
 )
 
@@ -117,8 +118,8 @@ func (r *PostgresRepository) ChatExists(ctx context.Context, chatID int) (bool, 
 }
 
 // NewPostgresRepository creates PostgresRepository instance.
-func NewPostgresRepository(context context.Context, connectionDSN string) *PostgresRepository {
-	pgx, err := pgxpool.New(context, connectionDSN)
+func NewPostgresRepository(context context.Context, dbConfig config.DBConfig) *PostgresRepository {
+	pgx, err := pgxpool.New(context, dbConfig.GetDSN())
 	if err != nil {
 		log.Fatalf("Unable to connect to database: %v", err)
 	}
