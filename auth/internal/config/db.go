@@ -2,7 +2,7 @@ package config
 
 import "fmt"
 
-// DatabaseConfig base interface for database configs with DSN retriever
+// DatabaseConfig base interface for database configs with DSN retriever.
 type DatabaseConfig interface {
 	GetDSN() string
 }
@@ -16,10 +16,8 @@ type PostgresConfig struct {
 	Password string `yaml:"password" env:"POSTGRES_PASSWORD"`
 }
 
-// GetDSN return PG connection dsn
+// GetDSN return PG connection dsn.
 func (db *PostgresConfig) GetDSN() string {
-	//"host=localhost port=54320 dbname=auth user=POSTGRES_USER password=POSTGRES_PASSWORD sslmode=disable"
 	return fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
 		db.Host, db.Port, db.User, db.Password, db.DBName)
-
 }

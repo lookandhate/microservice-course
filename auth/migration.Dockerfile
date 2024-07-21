@@ -14,7 +14,6 @@ WORKDIR /root
 COPY migrations/*.sql ./migrations/
 COPY migration.sh .
 COPY .env .
-RUN echo pwd && ls
 
 RUN chmod +x migration.sh
 ENTRYPOINT ["bash", "migration.sh"]

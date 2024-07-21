@@ -8,14 +8,14 @@ RUN go mod download
 
 
 WORKDIR /app
-RUN go build -o /bin/chat ./cmd/chat/main.go
+RUN go build -o /bin/auth ./cmd/auth/main.go
 
 FROM alpine
 
 WORKDIR /bin
 
-COPY --from=builder /bin/chat /bin/chat
+COPY --from=builder /bin/auth /bin/auth
 COPY .env .env
 COPY ./config ./config
 
-CMD ["/bin/chat"]
+CMD ["/bin/auth"]

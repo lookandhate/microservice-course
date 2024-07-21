@@ -23,6 +23,15 @@ services:
     networks:
       - chat_db_network
 
+  grpc_app:
+    build:
+      context: .
+      dockerfile: .Dockerfile
+    env_file:
+      - .env
+    networks:
+      chat_db_network:
+
 volumes:
   chat_db:
 networks:
