@@ -18,14 +18,17 @@ type PostgresRepository struct {
 }
 
 const (
-	userTable          = "users"
-	idColumn           = "id"
+	userTable = "users"
+
+	idColumn = "id"
+
 	emailColumn        = "email"
 	passwordHashColumn = "password_hash"
 	nameColumn         = "name"
 	roleColumn         = "role"
-	createdAtColumn    = "created_at"
-	updatedAtColumn    = "updated_at"
+
+	createdAtColumn = "created_at"
+	updatedAtColumn = "updated_at"
 )
 
 func NewPostgresRepository(context context.Context, cfg config.DatabaseConfig) *PostgresRepository {

@@ -1,7 +1,6 @@
 -- +goose Up
 -- +goose StatementBegin
 SELECT 'up SQL query';
--- +goose StatementEnd
 CREATE TABLE chats
 (
     id         serial primary key,
@@ -25,6 +24,7 @@ CREATE TABLE chat_members
     user_id bigint not null,
     chat_id bigint references chats (id) on delete cascade
 );
+-- +goose StatementEnd
 
 -- +goose Down
 -- +goose StatementBegin

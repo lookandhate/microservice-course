@@ -39,3 +39,10 @@ tasks:
 
   lint:
     golangci-lint run ./...
+
+
+  docker-build-and-push:
+    cmds:
+      - docker build -t ${DOCKER_REGISTRY}chat-v0.0.1 .
+      - docker login -u ${DOCKER_REGISTRY_USERNAME} -p ${DOCKER_REGISTRY_PASSWORD} ${DOCKER_REGISTRY}
+      - docker push ${DOCKER_REGISTRY}chat-v0.0.1

@@ -20,13 +20,15 @@ const (
 	chatTable       = "chats"
 	chatMemberTable = "chat_members"
 	messageTable    = "messages"
+
 	idColumn        = "id"
 	createdAtColumn = "created_at"
 	updatedAtColumn = "updated_at"
-	userIDColumn    = "user_id"
-	chatIDColumn    = "chat_id"
-	authorIDColumn  = "author_id"
-	contentColumn   = "content"
+
+	userIDColumn   = "user_id"
+	chatIDColumn   = "chat_id"
+	authorIDColumn = "author_id"
+	contentColumn  = "content"
 )
 
 // NewPostgresRepository creates PostgresRepository instance.
