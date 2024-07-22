@@ -9,14 +9,13 @@ import (
 )
 
 // RegisterUser validates CreateUserModel, then passes it to repo layer and returns created user id.
-func (s *Service) RegisterUser(ctx context.Context, user *model.CreateUserModel) (int, error) {
+func (s *Service) Register(ctx context.Context, user *model.CreateUserModel) (int, error) {
 	if user == nil {
 		return 0, service.ErrEmptyUser
 	}
 	// Check user role has been passed correctly
 	if user.Role == model.UserUnknownRole {
-		err := service.ErrInvalidRole
-		return 0, err
+		return 0, service.ErrInvalidRole
 	}
 
 	if user.PasswordConfirm != user.Password {
@@ -27,5 +26,6 @@ func (s *Service) RegisterUser(ctx context.Context, user *model.CreateUserModel)
 	if err != nil {
 		return 0, err
 	}
+
 	return createUserID, nil
 }

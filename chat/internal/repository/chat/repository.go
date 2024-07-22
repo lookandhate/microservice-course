@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"time"
 
@@ -15,13 +16,37 @@ type PostgresRepository struct {
 	pgx *pgxpool.Pool
 }
 
+const (
+	chatTable       = "chats"
+	chatMemberTable = "chat_members"
+	messageTable    = "messages"
+	idColumn        = "id"
+	createdAtColumn = "created_at"
+	updatedAtColumn = "updated_at"
+	userIDColumn    = "user_id"
+	chatIDColumn    = "chat_id"
+	authorIDColumn  = "author_id"
+	contentColumn   = "content"
+)
+
+// NewPostgresRepository creates PostgresRepository instance.
+func NewPostgresRepository(context context.Context, dbConfig config.DatabaseConfig) *PostgresRepository {
+	pgx, err := pgxpool.New(context, dbConfig.GetDSN())
+	if err != nil {
+		log.Fatalf("Unable to connect to database: %v", err)
+	}
+
+	return &PostgresRepository{pgx: pgx}
+}
+
 // CreateChat creates chat with chat members.
 func (r *PostgresRepository) CreateChat(ctx context.Context, request *model.CreateChatModel) (*model.ChatModel, error) {
-	builder := squirrel.Insert("chats").
+	builder := squirrel.Insert(chatTable).
 		PlaceholderFormat(squirrel.Dollar).
-		Columns("created_at").
+		Columns(createdAtColumn).
 		Values(time.Now()).
-		Suffix("returning id, created_at, updated_at")
+		Suffix(fmt.Sprintf("returning %s, %s, %s", idColumn, createdAtColumn, updatedAtColumn))
+
 	sql, args, err := builder.ToSql()
 	if err != nil {
 		return nil, err
@@ -41,9 +66,9 @@ func (r *PostgresRepository) CreateChat(ctx context.Context, request *model.Crea
 // addUsersToChat creates chat members with given chatID and userIDSs.
 func (r *PostgresRepository) addUsersToChat(ctx context.Context, chatID int, userIDs []int64) error {
 	builder := squirrel.
-		Insert("chat_members").
+		Insert(chatMemberTable).
 		PlaceholderFormat(squirrel.Dollar).
-		Columns("user_id", "chat_id")
+		Columns(userIDColumn, chatIDColumn)
 
 	for _, userID := range userIDs {
 		builder = builder.Values(userID, chatID)
@@ -61,11 +86,12 @@ func (r *PostgresRepository) addUsersToChat(ctx context.Context, chatID int, use
 
 // CreateMessage creates message.
 func (r *PostgresRepository) CreateMessage(ctx context.Context, message *model.CreateMessageModel) (*model.MessageModel, error) {
-	builder := squirrel.Insert("message").
+	builder := squirrel.Insert(messageTable).
 		PlaceholderFormat(squirrel.Dollar).
-		Columns("author_id", "content", "chat_id").
+		Columns(authorIDColumn, contentColumn, chatIDColumn).
 		Values(message.AuthorID, message.Content, message.ChatID).
-		Suffix("returning id, author_id, content, chat_id, created_at, updated_at")
+		Suffix(fmt.Sprintf("returning %s, %s, %s, %s, %s, %s",
+			idColumn, authorIDColumn, contentColumn, chatIDColumn, createdAtColumn, updatedAtColumn))
 
 	sql, args, err := builder.ToSql()
 	if err != nil {
@@ -86,9 +112,9 @@ func (r *PostgresRepository) CreateMessage(ctx context.Context, message *model.C
 
 // Delete deletes chat.
 func (r *PostgresRepository) Delete(ctx context.Context, id int64) error {
-	builder := squirrel.Delete("chats").
+	builder := squirrel.Delete(chatTable).
 		PlaceholderFormat(squirrel.Dollar).
-		Where(squirrel.Eq{"id": id})
+		Where(squirrel.Eq{idColumn: id})
 
 	sql, args, err := builder.ToSql()
 	if err != nil {
@@ -105,8 +131,8 @@ func (r *PostgresRepository) ChatExists(ctx context.Context, chatID int) (bool, 
 	builder := squirrel.Select("").
 		PlaceholderFormat(squirrel.Dollar).
 		Prefix("SELECT EXISTS (").
-		From("chats").
-		Where(squirrel.Eq{"id": chatID}).
+		From(chatTable).
+		Where(squirrel.Eq{idColumn: chatID}).
 		Suffix(")")
 	sql, args, err := builder.ToSql()
 
@@ -115,14 +141,4 @@ func (r *PostgresRepository) ChatExists(ctx context.Context, chatID int) (bool, 
 	}
 	err = r.pgx.QueryRow(ctx, sql, args...).Scan(&exists)
 	return exists, err
-}
-
-// NewPostgresRepository creates PostgresRepository instance.
-func NewPostgresRepository(context context.Context, dbConfig config.DatabaseConfig) *PostgresRepository {
-	pgx, err := pgxpool.New(context, dbConfig.GetDSN())
-	if err != nil {
-		log.Fatalf("Unable to connect to database: %v", err)
-	}
-
-	return &PostgresRepository{pgx: pgx}
 }

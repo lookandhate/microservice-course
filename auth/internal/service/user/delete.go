@@ -5,13 +5,8 @@ import (
 )
 
 // DeleteUser deletes user by given ID if it is correct.
-func (s *Service) DeleteUser(ctx context.Context, id int) error {
-	// Check if ID is correct
+func (s *Service) Delete(ctx context.Context, id int) error {
 	if err := s.validateID(id); err != nil {
-		return err
-	}
-
-	if err := s.checkUserExists(ctx, id); err != nil {
 		return err
 	}
 

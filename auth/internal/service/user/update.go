@@ -9,7 +9,7 @@ import (
 )
 
 // UpdateUser validates passed user data and updates user info.
-func (s *Service) UpdateUser(ctx context.Context, user *model.UpdateUserModel) (*model.UserModel, error) {
+func (s *Service) Update(ctx context.Context, user *model.UpdateUserModel) (*model.UserModel, error) {
 	if user == nil {
 		err := errors.New("user is nil")
 		return nil, err
@@ -17,10 +17,6 @@ func (s *Service) UpdateUser(ctx context.Context, user *model.UpdateUserModel) (
 
 	if user.Role == int(model.UserUnknownRole) {
 		err := service.ErrInvalidRole
-		return nil, err
-	}
-
-	if err := s.checkUserExists(ctx, user.ID); err != nil {
 		return nil, err
 	}
 

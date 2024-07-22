@@ -15,7 +15,7 @@ type Server struct {
 }
 
 func (s *Server) Get(ctx context.Context, request *authAPI.GetRequest) (*authAPI.GetResponse, error) {
-	user, err := s.userService.GetUser(ctx, int(request.GetId()))
+	user, err := s.userService.Get(ctx, int(request.GetId()))
 
 	if err != nil {
 		return nil, err
@@ -25,7 +25,7 @@ func (s *Server) Get(ctx context.Context, request *authAPI.GetRequest) (*authAPI
 }
 
 func (s *Server) Create(ctx context.Context, request *authAPI.CreateRequest) (*authAPI.CreateResponse, error) {
-	userID, err := s.userService.RegisterUser(ctx, convertor.CreateUserFromProto(request))
+	userID, err := s.userService.Register(ctx, convertor.CreateUserFromProto(request))
 	if err != nil {
 		return nil, err
 	}
@@ -34,7 +34,7 @@ func (s *Server) Create(ctx context.Context, request *authAPI.CreateRequest) (*a
 }
 
 func (s *Server) Update(ctx context.Context, request *authAPI.UpdateRequest) (*emptypb.Empty, error) {
-	_, err := s.userService.UpdateUser(ctx, convertor.UserUpdateFromProto(request))
+	_, err := s.userService.Update(ctx, convertor.UserUpdateFromProto(request))
 	if err != nil {
 		return nil, err
 	}
@@ -43,7 +43,7 @@ func (s *Server) Update(ctx context.Context, request *authAPI.UpdateRequest) (*e
 }
 
 func (s *Server) Delete(ctx context.Context, request *authAPI.DeleteRequest) (*emptypb.Empty, error) {
-	err := s.userService.DeleteUser(ctx, int(request.GetId()))
+	err := s.userService.Delete(ctx, int(request.GetId()))
 
 	return &emptypb.Empty{}, err
 }

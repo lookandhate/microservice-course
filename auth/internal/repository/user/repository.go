@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"time"
 
@@ -16,12 +17,32 @@ type PostgresRepository struct {
 	pgx *pgxpool.Pool
 }
 
+const (
+	userTable          = "users"
+	idColumn           = "id"
+	emailColumn        = "email"
+	passwordHashColumn = "password_hash"
+	nameColumn         = "name"
+	roleColumn         = "role"
+	createdAtColumn    = "created_at"
+	updatedAtColumn    = "updated_at"
+)
+
+func NewPostgresRepository(context context.Context, cfg config.DatabaseConfig) *PostgresRepository {
+	pgx, err := pgxpool.New(context, cfg.GetDSN())
+	if err != nil {
+		log.Fatalf("Unable to connect to database: %v", err)
+	}
+
+	return &PostgresRepository{pgx: pgx}
+}
+
 func (r *PostgresRepository) CreateUser(ctx context.Context, user *repository.CreateUserModel) (int, error) {
-	builder := squirrel.Insert("users").
+	builder := squirrel.Insert(userTable).
 		PlaceholderFormat(squirrel.Dollar).
-		Columns("email", "password_hash", "name", "role").
+		Columns(emailColumn, passwordHashColumn, nameColumn, roleColumn).
 		Values(user.Email, user.Password, user.Name, user.Role).
-		Suffix("RETURNING id")
+		Suffix(fmt.Sprintf("RETURNING %s", idColumn))
 
 	sql, args, err := builder.ToSql()
 	if err != nil {
@@ -39,10 +60,10 @@ func (r *PostgresRepository) CreateUser(ctx context.Context, user *repository.Cr
 
 func (r *PostgresRepository) GetUser(ctx context.Context, id int) (*model.UserModel, error) {
 	builder := squirrel.
-		Select("id", "email", "password_hash", "name", "role").
+		Select(idColumn, emailColumn, passwordHashColumn, nameColumn, roleColumn).
 		PlaceholderFormat(squirrel.Dollar).
-		From("users").
-		Where(squirrel.Eq{"id": id})
+		From(userTable).
+		Where(squirrel.Eq{idColumn: id})
 
 	sql, args, err := builder.ToSql()
 	if err != nil {
@@ -60,22 +81,25 @@ func (r *PostgresRepository) GetUser(ctx context.Context, id int) (*model.UserMo
 }
 
 func (r *PostgresRepository) UpdateUser(ctx context.Context, user *model.UpdateUserModel) (*model.UserModel, error) {
-	builder := squirrel.Update("users").PlaceholderFormat(squirrel.Dollar).Where(squirrel.Eq{"id": user.ID})
+	builder := squirrel.Update(userTable).PlaceholderFormat(squirrel.Dollar).Where(squirrel.Eq{idColumn: user.ID})
 
 	if user.Password != nil {
-		builder = builder.Set("password_hash", user.Password)
+		builder = builder.Set(passwordHashColumn, user.Password)
 	}
 	if user.Name != nil {
-		builder = builder.Set("name", user.Name)
+		builder = builder.Set(nameColumn, user.Name)
 	}
 	if user.Role != int(model.UserUnknownRole) {
-		builder = builder.Set("role", user.Role)
+		builder = builder.Set(roleColumn, user.Role)
 	}
 	if user.Email != nil {
-		builder = builder.Set("email", user.Email)
+		builder = builder.Set(emailColumn, user.Email)
 	}
 
-	builder = builder.Set("updated_at", time.Now()).Suffix("RETURNING id, email, name, role, created_at, updated_at")
+	builder = builder.
+		Set("updated_at", time.Now()).
+		Suffix(fmt.Sprintf("RETURNING %s, %s, %s, %s, %s, %s", idColumn, emailColumn, nameColumn, roleColumn, createdAtColumn, updatedAtColumn))
+
 	sql, args, err := builder.ToSql()
 	if err != nil {
 		return nil, err
@@ -97,7 +121,7 @@ func (r *PostgresRepository) UpdateUser(ctx context.Context, user *model.UpdateU
 }
 
 func (r *PostgresRepository) DeleteUser(ctx context.Context, id int) error {
-	builder := squirrel.Delete("users").Where(squirrel.Eq{"id": id})
+	builder := squirrel.Delete("users").Where(squirrel.Eq{idColumn: id})
 	sql, args, err := builder.ToSql()
 	if err != nil {
 		return err
@@ -113,8 +137,8 @@ func (r *PostgresRepository) CheckUserExists(ctx context.Context, id int) (bool,
 	builder := squirrel.Select("").
 		PlaceholderFormat(squirrel.Dollar).
 		Prefix("SELECT EXISTS (").
-		From("users").
-		Where(squirrel.Eq{"id": id}).
+		From(userTable).
+		Where(squirrel.Eq{idColumn: id}).
 		Suffix(")")
 	sql, args, err := builder.ToSql()
 
@@ -123,13 +147,4 @@ func (r *PostgresRepository) CheckUserExists(ctx context.Context, id int) (bool,
 	}
 	err = r.pgx.QueryRow(ctx, sql, args...).Scan(&exists)
 	return exists, err
-}
-
-func NewPostgresRepository(context context.Context, cfg config.DatabaseConfig) *PostgresRepository {
-	pgx, err := pgxpool.New(context, cfg.GetDSN())
-	if err != nil {
-		log.Fatalf("Unable to connect to database: %v", err)
-	}
-
-	return &PostgresRepository{pgx: pgx}
 }
