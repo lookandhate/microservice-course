@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"strconv"
 	"time"
 
 	"github.com/Masterminds/squirrel"
@@ -95,7 +96,7 @@ func (r *PostgresRepository) UpdateUser(ctx context.Context, user *model.UpdateU
 	}
 
 	builder = builder.
-		Set("updated_at", time.Now()).
+		Set(updatedAtColumn, time.Now()).
 		Suffix(fmt.Sprintf("RETURNING %s, %s, %s, %s, %s, %s", idColumn, emailColumn, nameColumn, roleColumn, createdAtColumn, updatedAtColumn))
 
 	sql, args, err := builder.ToSql()
@@ -119,7 +120,7 @@ func (r *PostgresRepository) UpdateUser(ctx context.Context, user *model.UpdateU
 }
 
 func (r *PostgresRepository) DeleteUser(ctx context.Context, id int) error {
-	builder := squirrel.Delete("users").Where(squirrel.Eq{idColumn: id})
+	builder := squirrel.Delete(userTable).Where(squirrel.Eq{idColumn: id})
 	sql, args, err := builder.ToSql()
 	if err != nil {
 		return err
@@ -131,13 +132,8 @@ func (r *PostgresRepository) DeleteUser(ctx context.Context, id int) error {
 
 func (r *PostgresRepository) CheckUserExists(ctx context.Context, id int) (bool, error) {
 	var exists bool
-	// using Prefix and suffix for EXIST query
-	builder := squirrel.Select("").
-		PlaceholderFormat(squirrel.Dollar).
-		Prefix("SELECT EXISTS (").
-		From(userTable).
-		Where(squirrel.Eq{idColumn: id}).
-		Suffix(")")
+
+	builder := squirrel.Select(fmt.Sprintf("EXISTS(SELECT 1 FROM %s WHERE id = %s) AS user_exists", userTable, strconv.Itoa(id)))
 	sql, args, err := builder.ToSql()
 
 	if err != nil {

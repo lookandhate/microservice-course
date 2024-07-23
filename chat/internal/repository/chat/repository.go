@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/Masterminds/squirrel"
@@ -123,12 +124,8 @@ func (r *PostgresRepository) Delete(ctx context.Context, id int64) error {
 func (r *PostgresRepository) ChatExists(ctx context.Context, chatID int) (bool, error) {
 	var exists bool
 	// using Prefix and suffix for EXIST query
-	builder := squirrel.Select("").
-		PlaceholderFormat(squirrel.Dollar).
-		Prefix("SELECT EXISTS (").
-		From(chatTable).
-		Where(squirrel.Eq{idColumn: chatID}).
-		Suffix(")")
+	builder := squirrel.Select(fmt.Sprintf("EXISTS(SELECT 1 FROM %s WHERE id = %s) AS chat_exists", chatTable, strconv.Itoa(chatID)))
+
 	sql, args, err := builder.ToSql()
 
 	if err != nil {
