@@ -48,8 +48,8 @@ func (s *Server) Delete(ctx context.Context, request *authAPI.DeleteRequest) (*e
 	return &emptypb.Empty{}, err
 }
 
-func NewAuthServer(service service.UserService) (*Server, error) {
+func NewAuthServer(service service.UserService) *Server {
 	return &Server{
 		userService: service,
-	}, nil
+	}
 }

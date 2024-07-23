@@ -6,6 +6,7 @@ import (
 	"log"
 	"net"
 
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/lookandhate/microservice-courese/chat/internal/config"
 	"github.com/lookandhate/microservice-courese/chat/internal/grpc/chat"
 	repository "github.com/lookandhate/microservice-courese/chat/internal/repository/chat"
@@ -18,14 +19,21 @@ func main() {
 	cfg := config.MustLoad()
 	serverHost := fmt.Sprintf("localhost:%d", cfg.GPRC.Port)
 
+	ctx := context.Background()
+
+	connectionPool, err := pgxpool.New(ctx, cfg.DB.GetDSN())
+	if err != nil {
+		log.Fatalf("Unable to connect to database: %v", err)
+	}
+
 	log.Printf("Serving at %v", serverHost)
 
 	lis, err := net.Listen("tcp", serverHost)
 	if err != nil {
 		log.Fatalf("Failed to listen: %s", err)
 	}
-	ctx := context.Background()
-	repo := repository.NewPostgresRepository(ctx, &cfg.DB)
+
+	repo := repository.NewPostgresRepository(connectionPool)
 	server := service.NewService(repo)
 
 	s := grpc.NewServer()

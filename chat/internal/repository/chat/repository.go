@@ -3,12 +3,10 @@ package repository
 import (
 	"context"
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/Masterminds/squirrel"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/lookandhate/microservice-courese/chat/internal/config"
 	"github.com/lookandhate/microservice-courese/chat/internal/repository/model"
 )
 
@@ -32,13 +30,8 @@ const (
 )
 
 // NewPostgresRepository creates PostgresRepository instance.
-func NewPostgresRepository(context context.Context, dbConfig config.DatabaseConfig) *PostgresRepository {
-	pgx, err := pgxpool.New(context, dbConfig.GetDSN())
-	if err != nil {
-		log.Fatalf("Unable to connect to database: %v", err)
-	}
-
-	return &PostgresRepository{pgx: pgx}
+func NewPostgresRepository(connectionPool *pgxpool.Pool) *PostgresRepository {
+	return &PostgresRepository{pgx: connectionPool}
 }
 
 // CreateChat creates chat with chat members.

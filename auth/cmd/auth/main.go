@@ -6,6 +6,7 @@ import (
 	"log"
 	"net"
 
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/lookandhate/microservice-courese/auth/internal/config"
 	"github.com/lookandhate/microservice-courese/auth/internal/grpc/auth"
 	"github.com/lookandhate/microservice-courese/auth/internal/repository/user"
@@ -20,12 +21,14 @@ func main() {
 	serverHost := fmt.Sprintf("localhost:%d", cfg.GPRC.Port)
 	log.Printf("Serving at %v", serverHost)
 
-	userRepo := user.NewPostgresRepository(ctx, &cfg.DB)
-	userService := service.NewUserService(userRepo)
-	server, err := auth.NewAuthServer(userService)
+	connectionPool, err := pgxpool.New(ctx, cfg.DB.GetDSN())
 	if err != nil {
-		log.Fatalf("failed to create auth server: %v", err)
+		log.Fatalf("Unable to connect to database: %v", err)
 	}
+
+	userRepo := user.NewPostgresRepository(connectionPool)
+	userService := service.NewUserService(userRepo)
+	server := auth.NewAuthServer(userService)
 
 	lis, err := net.Listen("tcp", serverHost)
 	if err != nil {

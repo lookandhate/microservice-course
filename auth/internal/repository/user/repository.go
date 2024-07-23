@@ -8,7 +8,6 @@ import (
 
 	"github.com/Masterminds/squirrel"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/lookandhate/microservice-courese/auth/internal/config"
 	repository "github.com/lookandhate/microservice-courese/auth/internal/repository/model"
 	"github.com/lookandhate/microservice-courese/auth/internal/service/model"
 )
@@ -31,13 +30,9 @@ const (
 	updatedAtColumn = "updated_at"
 )
 
-func NewPostgresRepository(context context.Context, cfg config.DatabaseConfig) *PostgresRepository {
-	pgx, err := pgxpool.New(context, cfg.GetDSN())
-	if err != nil {
-		log.Fatalf("Unable to connect to database: %v", err)
-	}
-
-	return &PostgresRepository{pgx: pgx}
+// NewPostgresRepository creates PostgresRepository instance.
+func NewPostgresRepository(connectionPool *pgxpool.Pool) *PostgresRepository {
+	return &PostgresRepository{pgx: connectionPool}
 }
 
 func (r *PostgresRepository) CreateUser(ctx context.Context, user *repository.CreateUserModel) (int, error) {
